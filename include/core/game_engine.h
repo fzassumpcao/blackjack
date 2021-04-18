@@ -8,6 +8,7 @@ using std::vector;
 namespace blackjack{
     class GameEngine {
     public:
+        GameEngine();
         void Shuffle();
         
         

@@ -44,19 +44,6 @@ if(NOT catch2_POPULATED)
     target_include_directories(catch2 INTERFACE ${catch2_SOURCE_DIR}/single_include)
 endif()
 
-FetchContent_Declare(
-        cards
-        GIT_REPOSITORY https://github.com/frankenbeanies/cdeck.git
-)
-
-# Adds Catch2 testing library
-FetchContent_GetProperties(cards)
-if(NOT cards_POPULATED)
-    FetchContent_Populate(cards)
-    add_library(cards INTERFACE)
-    target_include_directories(cards INTERFACE ${cards_SOURCE_DIR}/cdeck)
-endif()
-
 get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ABSOLUTE)
 get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
@@ -67,9 +54,10 @@ list(APPEND CORE_SOURCE_FILES src/core/card.cc
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES})
 
-list(APPEND TEST_FILES tests/test_game_engine.cc)
+list(APPEND TEST_FILES tests/test_game_engine.cc
+        tests/test_card.cc)
 
-add_library(blackjack-test tests/test_game_engine.cc)
+add_library(blackjack-test tests/test_game_engine.cc tests/test_card.cc)
 add_library(blackjack ${SOURCE_FILES} src/core/game_engine.cc)
 
 ci_make_app(
