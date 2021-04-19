@@ -44,6 +44,8 @@ if(NOT catch2_POPULATED)
     target_include_directories(catch2 INTERFACE ${catch2_SOURCE_DIR}/single_include)
 endif()
 
+target_include_directories(catch2 INTERFACE ${catch2_SOURCE_DIR}/single_include)
+
 get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ABSOLUTE)
 get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
@@ -57,8 +59,6 @@ list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES})
 list(APPEND TEST_FILES tests/test_game_engine.cc
         tests/test_card.cc)
 
-add_library(blackjack-test tests/test_game_engine.cc tests/test_card.cc)
-add_library(blackjack ${SOURCE_FILES} src/core/game_engine.cc)
 
 ci_make_app(
         APP_NAME        blackjack

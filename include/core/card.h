@@ -8,9 +8,10 @@ namespace blackjack {
     class Card {
     public:
         Card(const string& info, bool is_face_up);
-        const string& GetSuit();
-        const string& GetName();
-        size_t GetValue();
+        const string& GetSuit() const;
+        const string& GetName() const;
+        size_t GetValue() const;
+        bool IsFaceUp() const;
         void TurnOver();
 
     private:
