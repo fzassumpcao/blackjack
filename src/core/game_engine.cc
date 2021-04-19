@@ -25,6 +25,13 @@ std::deque<string> GameEngine::GetDeck() {
     return deck_;
 }
 
+bool GameEngine::IsGameFinished() {
+    return is_game_finished_;
+}
+
+bool GameEngine::PlayerWon() {
+    return player_win_;
+}
 
 void blackjack::GameEngine::StartDeal(std::default_random_engine seed) {
     player_win_ = false;
@@ -43,7 +50,7 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed) {
     Deal(false, true);
     Deal(true, true);
     
-    if (CalculateTotalValue(player_cards_) == kBlackjackVaLue) {
+    if (CalculateTotalValue(player_cards_) == kBlackjackValue) {
         is_game_finished_ = true;
         player_win_ = true;
         //TODO method to
@@ -54,6 +61,13 @@ void GameEngine::Hit() {
     if (!is_game_finished_) {
         Deal(false, true);
     }
+    
+    //Checks bust
+    if (CalculateTotalValue(player_cards_) > kBlackjackValue) {
+        is_game_finished_ = true;
+        player_win_ = false;
+        //TODO
+    }
 }
 
 void GameEngine::Stand() {
@@ -62,6 +76,19 @@ void GameEngine::Stand() {
     while (CalculateTotalValue(dealer_cards_) < kDealerStandValue) {
         Deal(true, true);
     }
+    is_game_finished_ = true;
+    size_t dealer_count = CalculateTotalValue(dealer_cards_);
+    size_t player_count = CalculateTotalValue(player_cards_);
+
+    if (dealer_count > kBlackjackValue || dealer_count < player_count) {
+        player_win_ = true;
+        
+    } else {
+        player_win_ = false;
+    }
+    
+    //TODO add method to evaluate a push, maybe an enum instead of bool for player_win_
+    
 }
 
 size_t GameEngine::CalculateTotalValue(const vector<Card> cards) {
@@ -81,5 +108,4 @@ void GameEngine::Deal(bool to_dealer, bool face_up) {
     }
     deck_.pop_front();
 }
-
 

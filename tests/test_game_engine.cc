@@ -25,9 +25,65 @@ TEST_CASE("Basic functionality") {
     REQUIRE(dealer[1].GetName() == "K");
     REQUIRE(dealer[1].GetSuit() == "d");
     REQUIRE(dealer[1].IsFaceUp() == true);
-    REQUIRE(gameEngine.GetDeck() == std::deque<string>());
     
     SECTION("Test hit") {
+        gameEngine.Hit();
+        REQUIRE(gameEngine.GetPlayerCards()[2].GetName() == "K");
+        REQUIRE(gameEngine.GetPlayerCards()[2].GetSuit() == "h");
+        REQUIRE(gameEngine.GetPlayerCards()[2].IsFaceUp() == true);
+        REQUIRE_FALSE(gameEngine.IsGameFinished());
         
+        gameEngine.Hit();
+        REQUIRE(gameEngine.GetPlayerCards()[3].GetName() == "9");
+        REQUIRE(gameEngine.GetPlayerCards()[3].GetSuit() == "c");
+        REQUIRE(gameEngine.GetPlayerCards()[3].IsFaceUp() == true);
+        
+        //Player busts
+        REQUIRE(gameEngine.IsGameFinished());
+        REQUIRE_FALSE(gameEngine.PlayerWon());
+        
+        //Hitting when game is over shouldn't do anything
+        gameEngine.Hit();
+        REQUIRE(gameEngine.GetPlayerCards().size() == 4);
+        REQUIRE(gameEngine.IsGameFinished());
+        REQUIRE_FALSE(gameEngine.PlayerWon());
     }
+    
+    SECTION("Test stand, dealer with >= 17") {
+        gameEngine.Stand();
+        REQUIRE(gameEngine.GetDealerCards().size() == 2);
+        REQUIRE(gameEngine.IsGameFinished());
+        REQUIRE_FALSE(gameEngine.PlayerWon());
+    }
+    
+    SECTION("Test stand, dealer with < 17 then bust") {
+        
+        //New seed to give dealer cards with value < 17
+        auto rng1 = std::default_random_engine {2};
+        gameEngine.StartDeal(rng1);
+        REQUIRE(gameEngine.GetDealerCards()[0].GetValue() == 10);
+        REQUIRE(gameEngine.GetDealerCards()[1].GetValue() == 2);
+        REQUIRE(gameEngine.GetPlayerCards()[0].GetValue() == 3);
+        REQUIRE(gameEngine.GetPlayerCards()[1].GetValue() == 3);
+        
+        gameEngine.Stand();  //Dealer should receive a 4, so 16 total, then 9 and bust
+        REQUIRE(gameEngine.GetDealerCards().size() == 4);
+        REQUIRE(gameEngine.IsGameFinished());
+        REQUIRE(gameEngine.PlayerWon());
+    }
+    
+    SECTION("Test stand, dealer < 17 and beats player") {
+        
+        //Same seed as before but the player hits to get the 4 and have a total of 10, 
+        // then stand so dealer can get the 9 and get 21 to win
+        auto rng1 = std::default_random_engine {2};
+        gameEngine.StartDeal(rng1);
+        gameEngine.Hit();
+        gameEngine.Stand();
+        
+        REQUIRE(gameEngine.GetDealerCards()[2].GetValue() == 9);
+        REQUIRE(gameEngine.IsGameFinished());
+        REQUIRE_FALSE(gameEngine.PlayerWon());
+    }
+
 }

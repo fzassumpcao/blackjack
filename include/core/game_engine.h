@@ -37,7 +37,7 @@ namespace blackjack{
         std::deque<string> deck_;
         vector<string> deck_cards_;
         
-        const size_t kBlackjackVaLue = 21;
+        const size_t kBlackjackValue = 21;
         const size_t kDealerStandValue = 17;
 
         /**
