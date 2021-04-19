@@ -11,27 +11,48 @@ namespace blackjack{
     class GameEngine {
     public:
         GameEngine();
+        
+        /**
+         * Shuffles the deck and deals 2 cards to the player and dealer.
+         * @param seed seed for shuffling
+         */
         void StartDeal(std::default_random_engine seed);
+        
+        /**
+         * Deals one card to the player if they haven't busted and checks the game state after.
+         */
         void Hit();
         void Stand();
-        const vector<Card>& GetDealerCards() const;
-        const vector<Card>& GetPlayerCards() const;
+        const vector<Card>& GetDealerCards();
+        const vector<Card>& GetPlayerCards();
         std::deque<string> GetDeck();
+        bool IsGameFinished();
+        bool PlayerWon();
         
     private:
         vector<Card> dealer_cards_;
         vector<Card> player_cards_;
+        bool player_win_;
+        bool is_game_finished_;
         std::deque<string> deck_;
-        
-        vector<string> deck_cards_ = {"As","2s","3s","4s","5s","6s","7s","8s","9s","Ts","Js","Qs","Ks",
-                                      "Ac","2c","3c","4c","5c","6c","7c","8c","9c","Tc","Jc","Qc","Kc",
-                                      "Ah","2h","3h","4h","5h","6h","7h","8h","9h","Th","Jh","Qh","Kh",
-                                      "Ad","2d","3d","4d","5d","6d","7d","8d","9d","Td","Jd","Qd","Kd",};
+        vector<string> deck_cards_;
         
         const size_t kBlackjackVaLue = 21;
         const size_t kDealerStandValue = 17;
 
+        /**
+         * Helper method to calculate total value of a given list cards.
+         * @param cards list of cards to sum value of
+         * @return total value
+         */
         size_t CalculateTotalValue(const vector<Card> cards);
+        
+        /**
+         * Deals top card of the deck to the dealer or player either face up or face down 
+         * and removes the card from the deck.
+         * @param to_dealer true to deal to dealer, false to deal to player
+         * @param face_up true to deal card face up or face down
+         */
         void Deal(bool to_dealer, bool face_up);
 
     };

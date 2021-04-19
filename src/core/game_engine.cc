@@ -3,14 +3,21 @@
 
 using namespace blackjack;
 GameEngine::GameEngine() {
-    
+    deck_cards_ = {"As","2s","3s","4s","5s","6s","7s","8s","9s","Ts","Js","Qs","Ks",
+                   "Ac","2c","3c","4c","5c","6c","7c","8c","9c","Tc","Jc","Qc","Kc",
+                   "Ah","2h","3h","4h","5h","6h","7h","8h","9h","Th","Jh","Qh","Kh",
+                   "Ad","2d","3d","4d","5d","6d","7d","8d","9d","Td","Jd","Qd","Kd"};
+    player_cards_.clear();
+    dealer_cards_.clear();
+    player_win_ = false;
+    is_game_finished_ = false;
 }
 
-const vector<Card> &GameEngine::GetDealerCards() const {
+const vector<Card> &GameEngine::GetDealerCards() {
     return dealer_cards_;
 }
 
-const vector<Card> &GameEngine::GetPlayerCards() const {
+const vector<Card> &GameEngine::GetPlayerCards() {
     return player_cards_;
 }
 
@@ -20,6 +27,9 @@ std::deque<string> GameEngine::GetDeck() {
 
 
 void blackjack::GameEngine::StartDeal(std::default_random_engine seed) {
+    player_win_ = false;
+    is_game_finished_ = false;
+    
     //std::mt19937(std::random_device()()) random seed saved for later
     deck_.clear();
     std::shuffle(deck_cards_.begin(), deck_cards_.end(), seed);
@@ -34,12 +44,16 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed) {
     Deal(true, true);
     
     if (CalculateTotalValue(player_cards_) == kBlackjackVaLue) {
-        //TODO
+        is_game_finished_ = true;
+        player_win_ = true;
+        //TODO method to
     } 
 }
 
 void GameEngine::Hit() {
-    Deal(false, true);
+    if (!is_game_finished_) {
+        Deal(false, true);
+    }
 }
 
 void GameEngine::Stand() {
