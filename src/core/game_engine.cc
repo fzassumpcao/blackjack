@@ -96,6 +96,25 @@ size_t GameEngine::CalculateTotalValue(const vector<Card> cards) {
     for (Card card : cards) {
         total += card.GetValue();
     }
+    
+    //Checks if the player is over 21 but has an ace
+    if (total > kBlackjackValue) {
+        for (Card card : cards) {
+            if (card.GetName() == "A") {
+                
+                //Subtracts appropriate amount regardless if the Ace was an 11 or 1
+                total -= card.GetValue();
+                card.SoftAce();
+                total += card.GetValue();
+                
+                //Only change one Ace if it brings the total under (in case there are more than one in a hand)
+                if (total <= kBlackjackValue) {
+                    break;
+                }
+            }
+        }
+    }
+    
     return total;
 }
 
@@ -108,4 +127,5 @@ void GameEngine::Deal(bool to_dealer, bool face_up) {
     }
     deck_.pop_front();
 }
+
 

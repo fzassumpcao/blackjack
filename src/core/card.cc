@@ -66,6 +66,13 @@ void Card::TurnOver() {
     is_face_up_ = true;
 }
 
+void Card::SoftAce() {
+    if (name_ != "A") {
+        throw std::logic_error("Card isn't an ace");
+    }
+    value_ = kSoftAceValue;
+}
+
 
 
 

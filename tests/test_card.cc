@@ -93,3 +93,19 @@ TEST_CASE("Test face up/down and turn over") {
         REQUIRE(card.IsFaceUp());
     }
 }
+
+TEST_CASE("Test soft ace functionality") {
+    SECTION("Card not an ace") {
+        Card card("8c", true);
+        REQUIRE_THROWS_AS(card.SoftAce(), std::logic_error);
+    }
+    SECTION("Card is an ace") {
+        Card card("ac", true);
+        card.SoftAce();
+        REQUIRE(card.GetValue() == 1);
+        
+        //Shouldn't change anything
+        card.SoftAce();
+        REQUIRE(card.GetValue() == 1);
+    }
+}

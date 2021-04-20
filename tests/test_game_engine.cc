@@ -85,5 +85,43 @@ TEST_CASE("Basic functionality") {
         REQUIRE(gameEngine.IsGameFinished());
         REQUIRE_FALSE(gameEngine.PlayerWon());
     }
+}
 
+TEST_CASE("Test calculate value") {
+    GameEngine gameEngine;
+    vector<Card> cards;
+    SECTION("No ace") {
+        cards.push_back(Card("Kc", true));
+        cards.push_back(Card("2s", true));
+        cards.push_back(Card("Td", true));
+        REQUIRE(gameEngine.CalculateTotalValue(cards) == 22);
+    }
+    
+    SECTION("One ace, player not over 21") {
+        cards.push_back(Card("Kc", true));
+        cards.push_back(Card("As", true));
+        REQUIRE(gameEngine.CalculateTotalValue(cards) == 21);
+    }
+    
+    SECTION("One ace, player over 21") {
+        cards.push_back(Card("Kc", true));
+        cards.push_back(Card("2s", true));
+        cards.push_back(Card("As", true));
+        REQUIRE(gameEngine.CalculateTotalValue(cards) == 13);
+    }
+    
+    SECTION("Two aces, only one soft") {
+        cards.push_back(Card("Ac", true));
+        cards.push_back(Card("2s", true));
+        cards.push_back(Card("As", true));
+        REQUIRE(gameEngine.CalculateTotalValue(cards) == 14);
+    }
+    
+    SECTION("Two aces, both soft") {
+        cards.push_back(Card("Kc", true));
+        cards.push_back(Card("2s", true));
+        cards.push_back(Card("As", true));
+        cards.push_back(Card("Ad", true));
+        REQUIRE(gameEngine.CalculateTotalValue(cards) == 14);
+    }
 }
