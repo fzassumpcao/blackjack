@@ -1,7 +1,5 @@
-#include <string>
-#include <vector>
-#include <deque>
 #include <random>
+#include <deque>
 #include "card.h"
 
 using std::string;
@@ -16,7 +14,7 @@ namespace blackjack{
          * Shuffles the deck and deals 2 cards to the player and dealer.
          * @param seed seed for shuffling
          */
-        void StartDeal(std::default_random_engine seed);
+        void StartDeal(std::default_random_engine seed);  //Tried making the parameter const & but would get errors from <random>
         
         /**
          * Deals one card to the player if they haven't busted and updates game state.
@@ -33,7 +31,7 @@ namespace blackjack{
          * @param cards list of cards to sum value of
          * @return total value
          */
-        size_t CalculateTotalValue(const vector<Card> cards);
+        size_t CalculateTotalValue(const vector<Card>& cards);
         
         const vector<Card>& GetDealerCards();
         const vector<Card>& GetPlayerCards();

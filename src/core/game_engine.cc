@@ -92,7 +92,7 @@ void GameEngine::Stand() {
 
 }
 
-size_t GameEngine::CalculateTotalValue(const vector<Card> cards) {
+size_t GameEngine::CalculateTotalValue(const vector<Card>& cards) {
     size_t total = 0;
     for (Card card : cards) {
         total += card.GetValue();

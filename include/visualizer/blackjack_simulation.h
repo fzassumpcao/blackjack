@@ -16,11 +16,17 @@ public:
     void draw() override;
     void update() override;
     
-    const int kWindowSize = 875;
-    const int kMargin = 100;
+    //TODO figure out how to organize what draws stuff (maybe have another class)
+    
+    const int kWindowWidth = 1440;
+    const int kWindowHeight = 800;
+    const size_t kCardHeight = 250;
+    const size_t kCardWidth = 180;
+    const size_t kCardCornerRadius = 10;
     
 private:
     GameEngine gameEngine_;
+    void DrawCard(const Card& card, const glm::vec2& pos);
 };
 
 }
