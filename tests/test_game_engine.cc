@@ -72,6 +72,17 @@ TEST_CASE("Basic functionality") {
         REQUIRE(gameEngine.PlayerWon());
     }
     
+    SECTION("Test start deal reset, multiple rounds") {
+        gameEngine.Hit();
+        gameEngine.Hit();
+        gameEngine.Hit();
+        gameEngine.Stand();
+        gameEngine.Stand();
+        gameEngine.StartDeal(rng);
+        REQUIRE(gameEngine.GetPlayerCards().size() == 2);
+        REQUIRE(gameEngine.GetDealerCards().size() == 2);
+    }
+    
     SECTION("Test stand, dealer < 17 and beats player") {
         
         //Same seed as before but the player hits to get the 4 and have a total of 10, 

@@ -54,7 +54,7 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 list(APPEND CORE_SOURCE_FILES src/core/card.cc
         src/core/game_engine.cc)
 
-list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES})
+list(APPEND SOURCE_FILES    src/visualizer/blackjack_simulation.cc ${CORE_SOURCE_FILES})
 
 list(APPEND TEST_FILES tests/test_game_engine.cc
         tests/test_card.cc)
@@ -74,8 +74,6 @@ ci_make_app(
         INCLUDES        include
         LIBRARIES       catch2
 )
-
-add_executable(start-game apps/cinder_app_main.cc ${CORE_SOURCE_FILES})
 
 if(MSVC)
     set_property(TARGET blackjack-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
