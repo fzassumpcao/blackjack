@@ -3,9 +3,10 @@
 namespace blackjack {
 namespace visualizer {
 
-    BlackjackSimulation::BlackjackSimulation() : gameEngine_(true) {
+    BlackjackSimulation::BlackjackSimulation() : gameEngine_(false) {
         ci::app::setWindowSize(kWindowWidth, kWindowHeight);
-        gameEngine_.StartDeal(std::default_random_engine(time(nullptr)));
+        std::random_device rd;
+        gameEngine_.StartDeal(std::default_random_engine(rd()));
     }
     
     void BlackjackSimulation::draw() {
@@ -17,7 +18,7 @@ namespace visualizer {
         
         //Draw deal button if game is finished, hit and stand buttons if not
         if (gameEngine_.IsGameFinished()) {
-            DrawButton(kDealButtonPos, k)
+            DrawButton(kDealButtonPos, kDealString);
             
         } else {
             DrawButton(kHitButtonPos, kHitString);
@@ -29,17 +30,24 @@ namespace visualizer {
         vec2 pos = event.getPos();
         
         if (gameEngine_.IsGameFinished()) {
+            if (pos.x >= kDealButtonPos.x && pos.x <= (kDealButtonPos.x + kButtonWidth)
+                && pos.y >= kDealButtonPos.y && pos.y <= (kDealButtonPos.y + kButtonHeight)) {
+                std::random_device rd;
+                gameEngine_.StartDeal(std::default_random_engine(rd()));
+            }
             
-        }
-        //Check if mouse click is inside hit button rectangle
-        if (pos.x >= kHitButtonPos.x && pos.x <= (kHitButtonPos.x + kButtonWidth) 
+        } else {
+            
+            //Check if mouse click is inside hit button rectangle
+            if (pos.x >= kHitButtonPos.x && pos.x <= (kHitButtonPos.x + kButtonWidth)
                 && pos.y >= kHitButtonPos.y && pos.y <= (kHitButtonPos.y + kButtonHeight)) {
-            gameEngine_.Hit();
-            
-        //Check if mouse click is inside stand button rectangle
-        } else if (pos.x >= kStandButtonPos.x && pos.x <= (kStandButtonPos.x + kButtonWidth)
-                   && pos.y >= kStandButtonPos.y && pos.y <= (kStandButtonPos.y + kButtonHeight)) {
-            gameEngine_.Stand();
+                gameEngine_.Hit();
+
+                //Check if mouse click is inside stand button rectangle
+            } else if (pos.x >= kStandButtonPos.x && pos.x <= (kStandButtonPos.x + kButtonWidth)
+                       && pos.y >= kStandButtonPos.y && pos.y <= (kStandButtonPos.y + kButtonHeight)) {
+                gameEngine_.Stand();
+            }
         }
     }
 
