@@ -63,13 +63,20 @@ namespace visualizer {
         ci::gl::drawStrokedRoundedRect(cinder::Rectf(pos.x, pos.y, pos.x + kCardWidth, pos.y +kCardHeight), 
                                        kCardCornerRadius,kCardCornerSegments);
 
-        //Sets the color of the card symbols to black if the card is a club or spade and to red for hearts and diamonds
-        ci::ColorAT<float> colorAT = 
-                ci::Color(card.GetSuit() == kClubString || card.GetSuit() == kSpadeString ? "black" : "red");
-        
-        //Draws card name/symbol
-        ci::gl::drawStringCentered(card.GetName(), vec2(pos.x + kCardWidth/2, pos.y + kCardHeight/5), 
-                                   colorAT, kCardFont);
+        if (card.IsFaceUp()) {
+            //Sets the color of the card symbols to black if the card is a club or spade and to red for hearts and diamonds
+            ci::ColorAT<float> colorAT =
+                    ci::Color(card.GetSuit() == kClubString || card.GetSuit() == kSpadeString ? "black" : "red");
+
+            //Draws card name/symbol
+            ci::gl::drawStringCentered(card.GetName(), vec2(pos.x + kCardWidth / 2, pos.y + kCardHeight / 5),
+                                       colorAT, kCardFont);
+            
+        } else {
+            ci::gl::color(ci::Color("blue"));
+            ci::gl::drawSolidRect(cinder::Rectf(pos.x + kBackOfCardMargin, pos.y + kBackOfCardMargin, 
+                                pos.x + kCardWidth - kBackOfCardMargin, pos.y + kCardHeight - kBackOfCardMargin));
+        }
     }
 
     void BlackjackSimulation::DrawCards(const vector<Card> &cards, const vec2 &pos, int horizontal_margin) {

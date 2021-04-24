@@ -31,7 +31,8 @@ public:
     const vec2 kHitButtonPos = vec2(300, 400);
     const vec2 kStandButtonPos = vec2(450, 400);
     const vec2 kDealButtonPos = vec2(400, 400);
-
+    const size_t kBackOfCardMargin = 10;
+    
     const string kClubString = "c";
     const string kSpadeString = "s";
     const string kHitString = "Hit";

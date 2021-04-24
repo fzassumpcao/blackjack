@@ -81,7 +81,7 @@ void GameEngine::Hit() {
 }
 
 void GameEngine::Stand() {
-    dealer_cards_[1].TurnOver();
+    dealer_cards_[0].TurnOver();
     
     while (CalculateTotalValue(dealer_cards_) < kDealerStandValue) {
         Deal(true, true);
