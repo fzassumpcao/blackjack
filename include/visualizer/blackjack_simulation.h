@@ -30,9 +30,10 @@ public:
     const size_t kButtonHeight = 50;
     const vec2 kHitButtonPos = vec2(300, 400);
     const vec2 kStandButtonPos = vec2(450, 400);
-    const vec2 kDealButtonPos = vec2(400, 400);
+    const vec2 kDealButtonPos = vec2(600, 400);
     const vec2 kDealerValuePos = vec2(50, 150);
     const vec2 kPlayerValuePos = vec2(50, 600);
+    const vec2 kEndRoundMessagePos = vec2(300, 400);
     const size_t kBackOfCardMargin = 10;
     
     const string kClubString = "c";
@@ -40,9 +41,12 @@ public:
     const string kHitString = "Hit";
     const string kStandString = "Stand";
     const string kDealString = "Deal";
+    const string kPlayerWinMessage = "You won";
+    const string kPlayerLostMessage = "You lost";
     const ci::Font kCardFont = ci::Font("arial", 200);
     const ci::Font kButtonFont = ci::Font("arial", 20);
     const ci::Font kValueFont = ci::Font("arial", 50);
+    const ci::Font kEndRoundMessageFont = ci::Font("arial", 50);
     
 private:
     GameEngine gameEngine_;
@@ -66,6 +70,8 @@ private:
     void DrawButton(const vec2& pos, const string& label);
     
     void DrawValue(const vec2& pos, const vector<Card>& cards);
+    
+    void DrawRoundEndMessage();
 };
 
 }

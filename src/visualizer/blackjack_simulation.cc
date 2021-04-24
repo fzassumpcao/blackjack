@@ -18,8 +18,9 @@ namespace visualizer {
         DrawValue(kPlayerValuePos, gameEngine_.GetPlayerCards());
 
 
-        //Draw deal button if game is finished, hit and stand buttons if not
+        //Draw deal button, message, and dealer card count if game is finished, hit and stand buttons if not
         if (gameEngine_.IsGameFinished()) {
+            DrawRoundEndMessage();
             DrawValue(kDealerValuePos, gameEngine_.GetDealerCards());
             DrawButton(kDealButtonPos, kDealString);
             
@@ -106,6 +107,17 @@ namespace visualizer {
     void BlackjackSimulation::DrawValue(const vec2& pos, const vector<Card>& cards) {
         size_t value = gameEngine_.CalculateTotalValue(cards);
         ci::gl::drawStringCentered(std::to_string(value), pos, ci::Color("black"), kValueFont);
+    }
+
+    void BlackjackSimulation::DrawRoundEndMessage() {
+        string message;
+        if (gameEngine_.PlayerWon()) {
+            message = kPlayerWinMessage;
+            
+        } else {
+            message = kPlayerLostMessage;
+        }
+        ci::gl::drawStringCentered(message, kEndRoundMessagePos, ci::Color("black"), kEndRoundMessageFont);
     }
 
 
