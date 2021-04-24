@@ -1,5 +1,7 @@
 #include <random>
 #include <deque>
+#include <chrono>
+#include <thread>
 #include "card.h"
 
 using std::string;
@@ -8,7 +10,7 @@ using std::vector;
 namespace blackjack{
     class GameEngine {
     public:
-        GameEngine();
+        GameEngine(bool deal_delay_on);
         
         /**
          * Shuffles the deck and deals 2 cards to the player and dealer.
@@ -40,6 +42,7 @@ namespace blackjack{
         bool PlayerWon();
         
     private:
+        bool deal_delay_on_;
         vector<Card> dealer_cards_;
         vector<Card> player_cards_;
         bool player_win_;
@@ -49,6 +52,7 @@ namespace blackjack{
         
         const size_t kBlackjackValue = 21;
         const size_t kDealerStandValue = 17;
+        const size_t kDealDelay = 1000;
         
         /**
          * Deals top card of the deck to the dealer or player either face up or face down 

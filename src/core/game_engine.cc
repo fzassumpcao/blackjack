@@ -1,9 +1,8 @@
 #include "../../include/core/game_engine.h"
-#include <random>
 
 namespace blackjack {
     
-GameEngine::GameEngine() {
+GameEngine::GameEngine(bool deal_delay_on) {
     deck_cards_ = {"As", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "Ts", "Js", "Qs", "Ks",
                    "Ac", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "Tc", "Jc", "Qc", "Kc",
                    "Ah", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "Th", "Jh", "Qh", "Kh",
@@ -12,6 +11,7 @@ GameEngine::GameEngine() {
     dealer_cards_.clear();
     player_win_ = false;
     is_game_finished_ = false;
+    deal_delay_on_ = deal_delay_on;
 }
 
 const vector<Card> &GameEngine::GetDealerCards() {
@@ -40,21 +40,26 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed) {
 
     //std::mt19937(std::random_device()()) random seed saved for later
     deck_.clear();
+    
+    //Shuffles vector with all cards and adds it to a deque
     std::shuffle(deck_cards_.begin(), deck_cards_.end(), seed);
     for (std::string card_info : deck_cards_) {
         deck_.push_back(card_info);
     }
     player_cards_.clear();
     dealer_cards_.clear();
+    
+    //Deals the first 2 cards each to the player and dealer, alternating, with the first dealer card being face down
     Deal(false, true);
     Deal(true, false);
     Deal(false, true);
     Deal(true, true);
 
+    //Checks for a blackjack ( TODO should pay 3:2 if possible)
     if (CalculateTotalValue(player_cards_) == kBlackjackValue) {
         is_game_finished_ = true;
         player_win_ = true;
-        //TODO method to
+        //TODO method to change balance from bet
     }
 }
 
@@ -73,10 +78,12 @@ void GameEngine::Hit() {
 
 void GameEngine::Stand() {
     dealer_cards_[1].TurnOver();
-
+    
     while (CalculateTotalValue(dealer_cards_) < kDealerStandValue) {
         Deal(true, true);
     }
+    
+    //Checks winner after dealer is done dealing cards to themselves
     is_game_finished_ = true;
     size_t dealer_count = CalculateTotalValue(dealer_cards_);
     size_t player_count = CalculateTotalValue(player_cards_);
@@ -103,7 +110,7 @@ size_t GameEngine::CalculateTotalValue(const vector<Card>& cards) {
         for (Card card : cards) {
             if (card.GetName() == "A") {
 
-                //Subtracts appropriate amount regardless if the Ace was an 11 or 1
+                //Subtracts appropriate amount regardless if the Ace was an 11 or already a 1
                 total -= card.GetValue();
                 card.SoftAce();
                 total += card.GetValue();
@@ -127,6 +134,10 @@ void GameEngine::Deal(bool to_dealer, bool face_up) {
         player_cards_.push_back(Card(deck_.front(), face_up));
     }
     deck_.pop_front();
+    
+    if (deal_delay_on_) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(kDealDelay));
+    }
 }
 
 }

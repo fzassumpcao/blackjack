@@ -5,7 +5,7 @@
 using namespace blackjack;
 
 TEST_CASE("Basic functionality") {
-    GameEngine gameEngine;
+    GameEngine gameEngine(false);
     auto rng = std::default_random_engine {0};
     //Top cards for seed: "2c", "9h", "8s", "Kd", "Kh", "9c", "5h", "Ts", "4d", "4s", "Tc", "3s", 
     // "As", "2h", "3h", "Qd", "Td", "8c", "2d", "5s", "7d",
@@ -99,7 +99,7 @@ TEST_CASE("Basic functionality") {
 }
 
 TEST_CASE("Test calculate value") {
-    GameEngine gameEngine;
+    GameEngine gameEngine(false);
     vector<Card> cards;
     SECTION("No ace") {
         cards.push_back(Card("Kc", true));

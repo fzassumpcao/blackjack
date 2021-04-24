@@ -5,7 +5,7 @@ using glm::vec2;
 namespace blackjack {
 namespace visualizer {
 
-    BlackjackSimulation::BlackjackSimulation() : gameEngine_() {
+    BlackjackSimulation::BlackjackSimulation() : gameEngine_(true) {
         ci::app::setWindowSize(kWindowWidth, kWindowHeight);
     }
     

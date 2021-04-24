@@ -13,11 +13,11 @@ Card::Card(const string &info, bool is_face_up) {
     char char2 = tolower(info.at(1));
 
     if (isalpha(char1)) {
-        if (char1 == 'A') {
+        if (char1 == kAceChar) {
             value_ = kAceValue;
 
-        } else if (char1 == 'T' || char1 == 'J'
-                   || char1 == 'Q' || char1 == 'K') {
+        } else if (char1 == kTenChar || char1 == kJackChar
+                   || char1 == kQueenChar || char1 == kKingChar) {
             value_ = kFaceCardValue;
 
         } else {
@@ -37,8 +37,8 @@ Card::Card(const string &info, bool is_face_up) {
 
     name_ = char1;
 
-    if (char2 == 'c' || char2 == 'd'
-        || char2 == 'h' || char2 == 's') {
+    if (char2 == kClubChar || char2 == kDiamondChar
+        || char2 == kHeartChar || char2 == kSpadeChar) {
         suit_ = char2;
 
     } else {
@@ -68,7 +68,7 @@ void Card::TurnOver() {
 }
 
 void Card::SoftAce() {
-    if (name_ != "A") {
+    if (name_[0] != kAceChar) {
         throw std::logic_error("Card isn't an ace");
     }
     value_ = kSoftAceValue;

@@ -14,9 +14,7 @@ public:
     BlackjackSimulation();
     
     void draw() override;
-    void update() override;
-    
-    //TODO figure out how to organize what draws stuff (maybe have another class)
+    void mouseDown(ci::app::MouseEvent event) override;
     
     const int kWindowWidth = 1440;
     const int kWindowHeight = 800;
