@@ -3,10 +3,10 @@
 namespace blackjack {
 namespace visualizer {
 
-    BlackjackSimulation::BlackjackSimulation() : gameEngine_(false) {
+    BlackjackSimulation::BlackjackSimulation() : gameEngine_(false, 1000) {
         ci::app::setWindowSize(kWindowWidth, kWindowHeight);
         std::random_device rd;
-        gameEngine_.StartDeal(std::default_random_engine(rd()));
+        gameEngine_.StartDeal(std::default_random_engine(rd()), 100);
     }
     
     void BlackjackSimulation::draw() {
@@ -37,7 +37,7 @@ namespace visualizer {
             if (pos.x >= kDealButtonPos.x && pos.x <= (kDealButtonPos.x + kButtonWidth)
                 && pos.y >= kDealButtonPos.y && pos.y <= (kDealButtonPos.y + kButtonHeight)) {
                 std::random_device rd;
-                gameEngine_.StartDeal(std::default_random_engine(rd()));
+                gameEngine_.StartDeal(std::default_random_engine(rd()), 100);
             }
             
         } else {
