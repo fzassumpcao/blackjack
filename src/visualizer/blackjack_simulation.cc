@@ -15,9 +15,12 @@ namespace visualizer {
         
         DrawCards(gameEngine_.GetPlayerCards(), vec2(200,500), 200);
         DrawCards(gameEngine_.GetDealerCards(), vec2(200,100), 200);
-        
+        DrawValue(kPlayerValuePos, gameEngine_.GetPlayerCards());
+
+
         //Draw deal button if game is finished, hit and stand buttons if not
         if (gameEngine_.IsGameFinished()) {
+            DrawValue(kDealerValuePos, gameEngine_.GetDealerCards());
             DrawButton(kDealButtonPos, kDealString);
             
         } else {
@@ -52,7 +55,6 @@ namespace visualizer {
     }
 
     void BlackjackSimulation::DrawCard(const Card& card, const vec2& pos) {
-        
         
         //TODO Change outline to draw thicker rectangle and four circles at the corners
         //Draws black card outline and white background
@@ -100,6 +102,12 @@ namespace visualizer {
         ci::gl::drawStringCentered(label, vec2(pos.x + kButtonWidth/2, pos.y + kButtonHeight/3),
                                    ci::Color("black"), kButtonFont);
     }
+
+    void BlackjackSimulation::DrawValue(const vec2& pos, const vector<Card>& cards) {
+        size_t value = gameEngine_.CalculateTotalValue(cards);
+        ci::gl::drawStringCentered(std::to_string(value), pos, ci::Color("black"), kValueFont);
+    }
+
 
 }
 }
