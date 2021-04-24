@@ -1,5 +1,7 @@
 #include "../../include/core/game_engine.h"
 
+#include <random>
+
 namespace blackjack {
     
 GameEngine::GameEngine(bool deal_delay_on) {
@@ -37,6 +39,8 @@ bool GameEngine::PlayerWon() {
 void blackjack::GameEngine::StartDeal(std::default_random_engine seed) {
     player_win_ = false;
     is_game_finished_ = false;
+    
+    std::shuffle(deck_cards_.begin(), deck_cards_.end(), seed);
 
     //std::mt19937(std::random_device()()) random seed saved for later
     deck_.clear();
@@ -108,7 +112,7 @@ size_t GameEngine::CalculateTotalValue(const vector<Card>& cards) {
     //Checks if the player is over 21 but has an ace
     if (total > kBlackjackValue) {
         for (Card card : cards) {
-            if (card.GetName() == "A") {
+            if (card.GetName() == kAceString) {
 
                 //Subtracts appropriate amount regardless if the Ace was an 11 or already a 1
                 total -= card.GetValue();

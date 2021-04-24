@@ -53,6 +53,7 @@ namespace blackjack{
         const size_t kBlackjackValue = 21;
         const size_t kDealerStandValue = 17;
         const size_t kDealDelay = 1000;
+        const string kAceString = "A";
         
         /**
          * Deals top card of the deck to the dealer or player either face up or face down 
