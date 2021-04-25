@@ -11,8 +11,7 @@ GameEngine::GameEngine(bool deal_delay_on, size_t player_balance) {
                    "Ad", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "Td", "Jd", "Qd", "Kd"};
     player_cards_.clear();
     dealer_cards_.clear();
-    player_win_ = false;
-    is_game_finished_ = false;
+    is_game_finished_ = true;
     deal_delay_on_ = deal_delay_on;
     player_balance_ = player_balance;
 }
@@ -33,12 +32,12 @@ bool GameEngine::IsGameFinished() {
     return is_game_finished_;
 }
 
-bool GameEngine::PlayerWon() {
-    return player_win_;
-}
-
 size_t GameEngine::GetBalance() {
     return player_balance_;
+}
+
+const string& GameEngine::GetMessage() {
+    return message_;
 }
 
 void blackjack::GameEngine::StartDeal(std::default_random_engine seed, size_t bet_size) {
@@ -46,7 +45,6 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed, size_t be
         throw std::invalid_argument("Invalid bet size");
     }
     current_bet_ = bet_size;
-    player_win_ = false;
     is_game_finished_ = false;
     
     std::shuffle(deck_cards_.begin(), deck_cards_.end(), seed);
@@ -68,12 +66,11 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed, size_t be
     Deal(false, true);
     Deal(true, true);
 
-    //TODO: Check push
-    //Checks for a blackjack ( TODO should pay 3:2 if possible)
     if (CalculateTotalValue(player_cards_) == kBlackjackValue) {
         is_game_finished_ = true;
-        player_win_ = true;
-        player_balance_ += current_bet_ * kBlackjackPayMultiplier;
+        size_t win_amount = current_bet_ * kBlackjackPayMultiplier;
+        message_ = "Blackjack! You won " + std::to_string(win_amount);
+        player_balance_ += win_amount;
     }
 }
 
@@ -87,11 +84,11 @@ void GameEngine::Hit() {
         
         //Player balance shouldn't decrease by hitting after game is over
         if (!is_game_finished_) {
+            message_ = "Bust! You lost " + std::to_string(current_bet_);
             player_balance_ -= current_bet_;
 
         }
         is_game_finished_ = true;
-        player_win_ = false;
     }
 }
 
@@ -108,21 +105,23 @@ void GameEngine::Stand() {
 
     //Player balance should only decrease first time game finished
     if (!is_game_finished_) {
-        if (dealer_count > kBlackjackValue || dealer_count < player_count) {
-            player_win_ = true;
+        if (dealer_count > kBlackjackValue) {
+            message_ = "Dealer bust! You won " + std::to_string(current_bet_);
+            player_balance_ += current_bet_;
+            
+        } else if (dealer_count < player_count) {
+            message_ = "You won " + std::to_string(current_bet_);
             player_balance_ += current_bet_;
 
-        } else {
-            player_win_ = false;
+        } else if (dealer_count > player_count) {
+            message_ = "You lost " + std::to_string(current_bet_);
             player_balance_ -= current_bet_;
+            
+        } else {
+            message_ = "Push!";
         }
     }
-
     is_game_finished_ = true;
-
-
-    //TODO add method to evaluate a push, maybe an enum instead of bool for player_win_
-
 }
 
 size_t GameEngine::CalculateTotalValue(const vector<Card>& cards) {

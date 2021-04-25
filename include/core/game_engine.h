@@ -37,21 +37,22 @@ namespace blackjack{
         
         const vector<Card>& GetDealerCards();
         const vector<Card>& GetPlayerCards();
+        //TODO delete
         std::deque<string> GetDeck();
         bool IsGameFinished();
-        bool PlayerWon();
         size_t GetBalance();
+        const string& GetMessage();
         
     private:
         bool deal_delay_on_;
         vector<Card> dealer_cards_;
         vector<Card> player_cards_;
-        bool player_win_;
         bool is_game_finished_;
         std::deque<string> deck_;
         vector<string> deck_cards_;
         size_t player_balance_;
         size_t current_bet_;
+        string message_;
         
         const size_t kBlackjackValue = 21;
         const size_t kDealerStandValue = 17;

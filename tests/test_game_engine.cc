@@ -40,14 +40,14 @@ TEST_CASE("Basic functionality") {
         
         //Player busts, subtracts bet from balance
         REQUIRE(gameEngine.IsGameFinished());
-        REQUIRE_FALSE(gameEngine.PlayerWon());
+        REQUIRE(gameEngine.GetMessage() == "Bust! You lost 100");
         REQUIRE(gameEngine.GetBalance() == 900);
         
         //Hitting when game is over shouldn't do anything
         gameEngine.Hit();
         REQUIRE(gameEngine.GetPlayerCards().size() == 4);
         REQUIRE(gameEngine.IsGameFinished());
-        REQUIRE_FALSE(gameEngine.PlayerWon());
+        REQUIRE(gameEngine.GetMessage() == "Bust! You lost 100");
         REQUIRE(gameEngine.GetBalance() == 900);
     }
     
@@ -55,7 +55,7 @@ TEST_CASE("Basic functionality") {
         gameEngine.Stand();
         REQUIRE(gameEngine.GetDealerCards().size() == 3);
         REQUIRE(gameEngine.IsGameFinished());
-        REQUIRE_FALSE(gameEngine.PlayerWon());
+        REQUIRE(gameEngine.GetMessage() == "You lost 100");
         REQUIRE(gameEngine.GetBalance() == 900);
     }
     
@@ -72,7 +72,7 @@ TEST_CASE("Basic functionality") {
         gameEngine.Stand();  //Dealer should receive a 4, so 16 total, then 9 and bust
         REQUIRE(gameEngine.GetDealerCards().size() == 4);
         REQUIRE(gameEngine.IsGameFinished());
-        REQUIRE(gameEngine.PlayerWon());
+        REQUIRE(gameEngine.GetMessage() == "Dealer bust! You won 100");
         REQUIRE(gameEngine.GetBalance() == 1100);
 
     }
@@ -86,21 +86,6 @@ TEST_CASE("Basic functionality") {
         gameEngine.StartDeal(rng, 100);
         REQUIRE(gameEngine.GetPlayerCards().size() == 2);
         REQUIRE(gameEngine.GetDealerCards().size() == 2);
-    }
-    
-    SECTION("Test stand, dealer < 17 and beats player") {
-        
-        //Same seed as before but the player hits to get the 4 and have a total of 10, 
-        // then stand so dealer can get the 9 and get 21 to win
-        auto rng1 = std::default_random_engine {2};
-        gameEngine.StartDeal(rng1, 100);
-        gameEngine.Hit();
-        gameEngine.Stand();
-        
-        REQUIRE(gameEngine.GetDealerCards()[2].GetValue() == 10);
-        REQUIRE(gameEngine.IsGameFinished());
-        REQUIRE(gameEngine.PlayerWon());
-        REQUIRE(gameEngine.GetBalance() == 1100);
     }
 }
 

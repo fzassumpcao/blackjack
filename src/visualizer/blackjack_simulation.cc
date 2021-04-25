@@ -3,30 +3,40 @@
 namespace blackjack {
 namespace visualizer {
 
-    BlackjackSimulation::BlackjackSimulation() : gameEngine_(false, 1000) {
+    BlackjackSimulation::BlackjackSimulation() : gameEngine_(false, 1000), in_starting_screen_(true) {
         ci::app::setWindowSize(kWindowWidth, kWindowHeight);
-        std::random_device rd;
-        gameEngine_.StartDeal(std::default_random_engine(rd()), 100);
     }
     
     void BlackjackSimulation::draw() {
+        
+        //TODO images for cards?
+
         ci::Color background_color("green");
         ci::gl::clear(background_color);
         
-        DrawCards(gameEngine_.GetPlayerCards(), vec2(200,500), 200);
-        DrawCards(gameEngine_.GetDealerCards(), vec2(200,100), 200);
-        DrawValue(kPlayerValuePos, gameEngine_.GetPlayerCards());
+        DrawCards(gameEngine_.GetPlayerCards(), kPlayerCardPos, kCardMargin);
+        DrawCards(gameEngine_.GetDealerCards(), kDealerCardPos, kCardMargin);
+        DrawBalance();
 
 
         //Draw deal button, message, and dealer card count if game is finished, hit and stand buttons if not
         if (gameEngine_.IsGameFinished()) {
-            DrawRoundEndMessage();
-            DrawValue(kDealerValuePos, gameEngine_.GetDealerCards());
+            
+            //TODO Draws starting screen only before first round 
             DrawButton(kDealButtonPos, kDealString);
+            if (in_starting_screen_) {
+                ci::gl::drawStringCentered(kTitleString, kTitlePos, ci::Color("black"), kTitleFont);
+                
+            } else {
+                DrawRoundEndMessage();
+                DrawValue(kDealerValuePos, gameEngine_.GetDealerCards());
+                DrawValue(kPlayerValuePos, gameEngine_.GetPlayerCards());
+            }
             
         } else {
             DrawButton(kHitButtonPos, kHitString);
             DrawButton(kStandButtonPos, kStandString);
+            DrawValue(kPlayerValuePos, gameEngine_.GetPlayerCards());
         }
     }
 
@@ -38,6 +48,7 @@ namespace visualizer {
                 && pos.y >= kDealButtonPos.y && pos.y <= (kDealButtonPos.y + kButtonHeight)) {
                 std::random_device rd;
                 gameEngine_.StartDeal(std::default_random_engine(rd()), 100);
+                in_starting_screen_ = false;
             }
             
         } else {
@@ -110,14 +121,12 @@ namespace visualizer {
     }
 
     void BlackjackSimulation::DrawRoundEndMessage() {
-        string message;
-        if (gameEngine_.PlayerWon()) {
-            message = kPlayerWinMessage;
-            
-        } else {
-            message = kPlayerLostMessage;
-        }
-        ci::gl::drawStringCentered(message, kEndRoundMessagePos, ci::Color("black"), kEndRoundMessageFont);
+        ci::gl::drawStringCentered(gameEngine_.GetMessage(), kEndRoundMessagePos, ci::Color("black"), kEndRoundMessageFont);
+    }
+
+    void BlackjackSimulation::DrawBalance() {
+        string balance_string = kBalanceString + std::to_string(gameEngine_.GetBalance());
+        ci::gl::drawStringRight(balance_string, kBalancePos, ci::Color("black"), kBalanceFont);
     }
 
 
