@@ -58,6 +58,12 @@ namespace blackjack{
         const size_t kDealerStandValue = 17;
         const size_t kDealDelay = 1000;
         const string kAceString = "A";
+        const string kBustString = "Bust! You lost ";
+        const string kBlackjackString = "Blackjack! You won ";
+        const string kDealerBustString = "Dealer bust! You won ";
+        const string kWinString = "You won ";
+        const string kLoseString = "You lost ";
+        const string kPushString = "Push!";
         const float kBlackjackPayMultiplier = 1.5;
         
         /**

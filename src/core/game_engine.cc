@@ -69,7 +69,7 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed, size_t be
     if (CalculateTotalValue(player_cards_) == kBlackjackValue) {
         is_game_finished_ = true;
         size_t win_amount = current_bet_ * kBlackjackPayMultiplier;
-        message_ = "Blackjack! You won " + std::to_string(win_amount);
+        message_ = kBlackjackString + std::to_string(win_amount);
         player_balance_ += win_amount;
     }
 }
@@ -84,7 +84,7 @@ void GameEngine::Hit() {
         
         //Player balance shouldn't decrease by hitting after game is over
         if (!is_game_finished_) {
-            message_ = "Bust! You lost " + std::to_string(current_bet_);
+            message_ = kBustString + std::to_string(current_bet_);
             player_balance_ -= current_bet_;
 
         }
@@ -106,19 +106,19 @@ void GameEngine::Stand() {
     //Player balance should only decrease first time game finished
     if (!is_game_finished_) {
         if (dealer_count > kBlackjackValue) {
-            message_ = "Dealer bust! You won " + std::to_string(current_bet_);
+            message_ = kDealerBustString + std::to_string(current_bet_);
             player_balance_ += current_bet_;
             
         } else if (dealer_count < player_count) {
-            message_ = "You won " + std::to_string(current_bet_);
+            message_ = kWinString + std::to_string(current_bet_);
             player_balance_ += current_bet_;
 
         } else if (dealer_count > player_count) {
-            message_ = "You lost " + std::to_string(current_bet_);
+            message_ = kLoseString + std::to_string(current_bet_);
             player_balance_ -= current_bet_;
             
         } else {
-            message_ = "Push!";
+            message_ = kPushString;
         }
     }
     is_game_finished_ = true;
