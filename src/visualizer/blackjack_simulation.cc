@@ -1,36 +1,134 @@
 #include "visualizer/blackjack_simulation.h"
 
-using glm::vec2;
-
 namespace blackjack {
 namespace visualizer {
 
-    BlackjackSimulation::BlackjackSimulation() : gameEngine_() {
+    BlackjackSimulation::BlackjackSimulation() : gameEngine_(false, 1000), in_starting_screen_(true) {
         ci::app::setWindowSize(kWindowWidth, kWindowHeight);
     }
     
     void BlackjackSimulation::draw() {
+        
+        //TODO images for cards?
+
         ci::Color background_color("green");
         ci::gl::clear(background_color);
-        DrawCard(Card("as", true), vec2(500, 500));
+        
+        DrawCards(gameEngine_.GetPlayerCards(), kPlayerCardPos, kCardMargin);
+        DrawCards(gameEngine_.GetDealerCards(), kDealerCardPos, kCardMargin);
+        DrawBalance();
+
+
+        //Draw deal button, message, and dealer card count if game is finished, hit and stand buttons if not
+        if (gameEngine_.IsGameFinished()) {
+            
+            //TODO Draws starting screen only before first round 
+            DrawButton(kDealButtonPos, kDealString);
+            if (in_starting_screen_) {
+                ci::gl::drawStringCentered(kTitleString, kTitlePos, ci::Color("black"), kTitleFont);
+                
+            } else {
+                DrawRoundEndMessage();
+                DrawValue(kDealerValuePos, gameEngine_.GetDealerCards());
+                DrawValue(kPlayerValuePos, gameEngine_.GetPlayerCards());
+            }
+            
+        } else {
+            DrawButton(kHitButtonPos, kHitString);
+            DrawButton(kStandButtonPos, kStandString);
+            DrawValue(kPlayerValuePos, gameEngine_.GetPlayerCards());
+        }
     }
-    
-    void BlackjackSimulation::update() {
-        AppBase::update();
+
+    void BlackjackSimulation::mouseDown(ci::app::MouseEvent event) {
+        vec2 pos = event.getPos();
+        
+        if (gameEngine_.IsGameFinished()) {
+            if (pos.x >= kDealButtonPos.x && pos.x <= (kDealButtonPos.x + kButtonWidth)
+                && pos.y >= kDealButtonPos.y && pos.y <= (kDealButtonPos.y + kButtonHeight)) {
+                std::random_device rd;
+                gameEngine_.StartDeal(std::default_random_engine(rd()), 100);
+                in_starting_screen_ = false;
+            }
+            
+        } else {
+            
+            //Check if mouse click is inside hit button rectangle
+            if (pos.x >= kHitButtonPos.x && pos.x <= (kHitButtonPos.x + kButtonWidth)
+                && pos.y >= kHitButtonPos.y && pos.y <= (kHitButtonPos.y + kButtonHeight)) {
+                gameEngine_.Hit();
+
+                //Check if mouse click is inside stand button rectangle
+            } else if (pos.x >= kStandButtonPos.x && pos.x <= (kStandButtonPos.x + kButtonWidth)
+                       && pos.y >= kStandButtonPos.y && pos.y <= (kStandButtonPos.y + kButtonHeight)) {
+                gameEngine_.Stand();
+            }
+        }
     }
 
     void BlackjackSimulation::DrawCard(const Card& card, const vec2& pos) {
+        
+        //TODO Change outline to draw thicker rectangle and four circles at the corners
+        //Draws black card outline and white background
         ci::gl::color(ci::Color("white"));
         ci::gl::drawSolidRoundedRect(cinder::Rectf(pos.x, pos.y, pos.x + kCardWidth, pos.y +kCardHeight), kCardCornerRadius, 
-                                     10, pos,vec2(pos.x + kCardWidth, pos.y + kCardHeight));
+                                     kCardCornerSegments, pos,vec2(pos.x + kCardWidth, pos.y + kCardHeight));
+        ci::gl::color(ci::Color("black"));
+        ci::gl::drawStrokedRoundedRect(cinder::Rectf(pos.x, pos.y, pos.x + kCardWidth, pos.y +kCardHeight), 
+                                       kCardCornerRadius,kCardCornerSegments);
 
-        ci::gl::color(ci::Color(card.GetSuit() == "c" || card.GetSuit() == "s" ? "black" : "red"));
-        
-        //TODO
-        ci::gl::drawStringCentered(card.GetName(), vec2(pos.x + kCardWidth/2, pos.y + kCardHeight/2), cinder::ColorA(),
-                                   cinder::Font("arial", 20));
-        
+        if (card.IsFaceUp()) {
+            //Sets the color of the card symbols to black if the card is a club or spade and to red for hearts and diamonds
+            ci::ColorAT<float> colorAT =
+                    ci::Color(card.GetSuit() == kClubString || card.GetSuit() == kSpadeString ? "black" : "red");
+
+            //Draws card name/symbol
+            ci::gl::drawStringCentered(card.GetName(), vec2(pos.x + kCardWidth / 2, pos.y + kCardHeight / 5),
+                                       colorAT, kCardFont);
+            
+        } else {
+            ci::gl::color(ci::Color("blue"));
+            ci::gl::drawSolidRect(cinder::Rectf(pos.x + kBackOfCardMargin, pos.y + kBackOfCardMargin, 
+                                pos.x + kCardWidth - kBackOfCardMargin, pos.y + kCardHeight - kBackOfCardMargin));
+        }
     }
+
+    void BlackjackSimulation::DrawCards(const vector<Card> &cards, const vec2 &pos, int horizontal_margin) {
+        for (size_t i = 0; i < cards.size(); i++) {
+            DrawCard(cards[i], vec2(pos.x + horizontal_margin * i, pos.y));
+        }
+    }
+
+    void BlackjackSimulation::DrawButton(const vec2 &pos, const string& label) {
+        
+        //Draw button background
+        ci::gl::color(ci::Color("yellow"));
+        cinder::Rectf rectf(pos.x, pos.y, pos.x + kButtonWidth, pos.y + kButtonHeight);
+        ci::gl::drawSolidRect(rectf);
+        ci::gl::color(ci::Color("black"));
+        
+        //Draw outline
+        ci::gl::drawStrokedRect(rectf, 3);
+        
+        //Draw label
+        ci::gl::drawStringCentered(label, vec2(pos.x + kButtonWidth/2, pos.y + kButtonHeight/3),
+                                   ci::Color("black"), kButtonFont);
+    }
+
+    void BlackjackSimulation::DrawValue(const vec2& pos, const vector<Card>& cards) {
+        size_t value = gameEngine_.CalculateTotalValue(cards);
+        ci::gl::drawStringCentered(std::to_string(value), pos, ci::Color("black"), kValueFont);
+    }
+
+    void BlackjackSimulation::DrawRoundEndMessage() {
+        ci::gl::drawStringCentered(gameEngine_.GetMessage(), kEndRoundMessagePos, ci::Color("black"), kEndRoundMessageFont);
+    }
+
+    void BlackjackSimulation::DrawBalance() {
+        string balance_string = kBalanceString + std::to_string(gameEngine_.GetBalance());
+        ci::gl::drawStringRight(balance_string, kBalancePos, ci::Color("black"), kBalanceFont);
+    }
+
 
 }
 }
