@@ -176,7 +176,6 @@ void GameEngine::Deal(bool to_dealer, bool face_up) {
 void GameEngine::Reset(size_t balance) {
     player_cards_.clear();
     dealer_cards_.clear();
-    is_game_finished_ = false;
     player_balance_ = balance;
 }
 

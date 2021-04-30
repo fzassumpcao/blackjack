@@ -3,7 +3,7 @@
 namespace blackjack {
 namespace visualizer {
 
-BlackjackSimulation::BlackjackSimulation() : gameEngine_(1000), in_starting_screen_(true) {
+BlackjackSimulation::BlackjackSimulation() : gameEngine_(100), in_starting_screen_(true) {
     ci::app::setWindowSize(kWindowWidth, kWindowHeight);
 }
 
@@ -44,8 +44,8 @@ void BlackjackSimulation::draw() {
 
 void BlackjackSimulation::mouseDown(ci::app::MouseEvent event) {
     vec2 pos = event.getPos();
-    
     if (gameEngine_.IsGameFinished()) {
+        
         //Check if mouse is inside deal button only when game is finished
         if (pos.x >= kDealButtonPos.x && pos.x <= (kDealButtonPos.x + kButtonWidth)
             && pos.y >= kDealButtonPos.y && pos.y <= (kDealButtonPos.y + kButtonHeight)) {
