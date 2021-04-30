@@ -10,7 +10,7 @@ using std::vector;
 namespace blackjack{
     class GameEngine {
     public:
-        GameEngine(bool deal_delay_on, size_t player_balance);
+        GameEngine(size_t player_balance);
         
         /**
          * Shuffles the deck and deals 2 cards to the player and dealer.
@@ -35,6 +35,12 @@ namespace blackjack{
          */
         size_t CalculateTotalValue(const vector<Card>& cards);
         
+        /**
+         * Resets variables and sets new player balance
+         * @param balance new balance
+         */
+        void Reset(size_t balance);
+        
         const vector<Card>& GetDealerCards();
         const vector<Card>& GetPlayerCards();
         //TODO delete
@@ -44,7 +50,6 @@ namespace blackjack{
         const string& GetMessage();
         
     private:
-        bool deal_delay_on_;
         vector<Card> dealer_cards_;
         vector<Card> player_cards_;
         bool is_game_finished_;
@@ -56,7 +61,6 @@ namespace blackjack{
         
         const size_t kBlackjackValue = 21;
         const size_t kDealerStandValue = 17;
-        const size_t kDealDelay = 1000;
         const string kAceString = "A";
         const string kBustString = "Bust! You lost ";
         const string kBlackjackString = "Blackjack! You won ";

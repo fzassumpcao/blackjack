@@ -5,7 +5,7 @@
 using namespace blackjack;
 
 TEST_CASE("Basic functionality") {
-    GameEngine gameEngine(false, 1000);
+    GameEngine gameEngine(1000);
     auto rng = std::default_random_engine {0};
     //Top cards for seed: "2c", "9h", "8s", "Kd", "Kh", "9c", "5h", "Ts", "4d", "4s", "Tc", "3s", 
     // "As", "2h", "3h", "Qd", "Td", "8c", "2d", "5s", "7d",
@@ -87,10 +87,19 @@ TEST_CASE("Basic functionality") {
         REQUIRE(gameEngine.GetPlayerCards().size() == 2);
         REQUIRE(gameEngine.GetDealerCards().size() == 2);
     }
+    
+    SECTION("Test reset") {
+        gameEngine.Stand();
+        gameEngine.Reset(1);
+        REQUIRE(gameEngine.GetPlayerCards().size() == 0);
+        REQUIRE(gameEngine.GetDealerCards().size() == 0);   
+        REQUIRE(gameEngine.GetBalance() == 1);
+        REQUIRE_FALSE(gameEngine.IsGameFinished());
+    }
 }
 
 TEST_CASE("Test calculate value") {
-    GameEngine gameEngine(false, 1000);
+    GameEngine gameEngine(1000);
     vector<Card> cards;
     SECTION("No ace") {
         cards.push_back(Card("Kc", true));
@@ -128,9 +137,15 @@ TEST_CASE("Test calculate value") {
     }
 }
 
-TEST_CASE("Invalid bet sizes") {
-    GameEngine gameEngine(false, 10);
+TEST_CASE("Invalid commands") {
+    GameEngine gameEngine(10);
     auto rng = std::default_random_engine {0};
+    SECTION("Hit before start deal") {
+        REQUIRE_THROWS_AS(gameEngine.Hit(), std::logic_error);
+    }
+    SECTION("Stand before start deal") {
+        REQUIRE_THROWS_AS(gameEngine.Stand(), std::logic_error);
+    }
     SECTION("Bet size greater than balance") {
         REQUIRE_THROWS_AS(gameEngine.StartDeal(rng, 11), std::invalid_argument);
     }

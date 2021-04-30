@@ -3,13 +3,18 @@
 namespace blackjack {
 namespace visualizer {
 
-BlackjackSimulation::BlackjackSimulation() : gameEngine_(false, 1000), in_starting_screen_(true) {
+BlackjackSimulation::BlackjackSimulation() : gameEngine_(1000), in_starting_screen_(true) {
     ci::app::setWindowSize(kWindowWidth, kWindowHeight);
 }
 
 void BlackjackSimulation::draw() {
     
-    //TODO images for cards?
+    if (gameEngine_.GetBalance() == 0) {
+        gameEngine_.Reset(1000);
+        in_starting_screen_ = true;
+    }
+    
+    //TODO images for cards? Also option to choose balance? maybe change restart in game engine to take in a value
     
     ci::gl::clear(kBackgroundColor);
     
@@ -68,7 +73,6 @@ void BlackjackSimulation::mouseDown(ci::app::MouseEvent event) {
 
 void BlackjackSimulation::DrawCard(const Card& card, const vec2& pos) {
     
-    //TODO Change outline to draw thicker rectangle and four circles at the corners
     //Draws black card outline and white background
     ci::gl::color(kCardBackgroundColor);
     ci::gl::drawSolidRoundedRect(cinder::Rectf(pos.x, pos.y, pos.x + kCardWidth, pos.y +kCardHeight), kCardCornerRadius, 
