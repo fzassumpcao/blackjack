@@ -58,7 +58,24 @@ private:
     const ci::Font kEndRoundMessageFont = ci::Font("arial", 50);
     const ci::Font kTitleFont = ci::Font("arial", 200);
     const ci::Font kBalanceFont = ci::Font("arial", 30);
-    
+    const ci::Color kBackgroundColor = ci::Color("green");
+    const ci::Color kTitleColor = ci::Color("black");
+    const ci::Color kCardBackgroundColor = ci::Color("white");
+    const ci::Color kCardOutlineColor = ci::Color("black");
+    const ci::Color kRedCardColor = ci::Color("red");
+    const ci::Color kBlackCardColor = ci::Color("black");
+    const ci::Color kBackCardColor = ci::Color("blue");
+    const ci::Color kButtonColor = ci::Color("yellow");
+    const ci::Color kButtonLabelColor = ci::Color("black");
+    const ci::Color kButtonOutlineColor = ci::Color("black");
+    const ci::Color kValueColor = ci::Color("black");
+    const ci::Color kMessageColor = ci::Color("black");
+    const ci::Color kBalanceColor = ci::Color("black");
+
+
+
+
+
     /**
      * Draws a card outline and card info, with color corresponding to suit of card.
      * @param card card to draw

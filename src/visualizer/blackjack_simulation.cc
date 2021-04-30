@@ -10,9 +10,8 @@ BlackjackSimulation::BlackjackSimulation() : gameEngine_(false, 1000), in_starti
 void BlackjackSimulation::draw() {
     
     //TODO images for cards?
-
-    ci::Color background_color("green");
-    ci::gl::clear(background_color);
+    
+    ci::gl::clear(kBackgroundColor);
     
     DrawCards(gameEngine_.GetPlayerCards(), kPlayerCardPos, kCardMargin);
     DrawCards(gameEngine_.GetDealerCards(), kDealerCardPos, kCardMargin);
@@ -23,7 +22,7 @@ void BlackjackSimulation::draw() {
         
         DrawButton(kDealButtonPos, kDealString);
         if (in_starting_screen_) {
-            ci::gl::drawStringCentered(kTitleString, kTitlePos, ci::Color("black"), kTitleFont);
+            ci::gl::drawStringCentered(kTitleString, kTitlePos, kTitleColor, kTitleFont);
             
         } else {
             DrawRoundEndMessage();
@@ -71,24 +70,24 @@ void BlackjackSimulation::DrawCard(const Card& card, const vec2& pos) {
     
     //TODO Change outline to draw thicker rectangle and four circles at the corners
     //Draws black card outline and white background
-    ci::gl::color(ci::Color("white"));
+    ci::gl::color(kCardBackgroundColor);
     ci::gl::drawSolidRoundedRect(cinder::Rectf(pos.x, pos.y, pos.x + kCardWidth, pos.y +kCardHeight), kCardCornerRadius, 
                                  kCardCornerSegments, pos,vec2(pos.x + kCardWidth, pos.y + kCardHeight));
-    ci::gl::color(ci::Color("black"));
+    ci::gl::color(kCardOutlineColor);
     ci::gl::drawStrokedRoundedRect(cinder::Rectf(pos.x, pos.y, pos.x + kCardWidth, pos.y +kCardHeight), 
                                    kCardCornerRadius,kCardCornerSegments);
 
     if (card.IsFaceUp()) {
         //Sets the color of the card symbols to black if the card is a club or spade and to red for hearts and diamonds
-        ci::ColorAT<float> colorAT =
-                ci::Color(card.GetSuit() == kClubString || card.GetSuit() == kSpadeString ? "black" : "red");
+        ci::ColorAT<float> colorAT;
+        colorAT = card.GetSuit() == kClubString || card.GetSuit() == kSpadeString ? kBlackCardColor : kRedCardColor;
 
         //Draws card name/symbol
         ci::gl::drawStringCentered(card.GetName(), vec2(pos.x + kCardWidth / 2, pos.y + kCardHeight / 5),
                                    colorAT, kCardFont);
         
     } else {
-        ci::gl::color(ci::Color("blue"));
+        ci::gl::color(kBackCardColor);
         ci::gl::drawSolidRect(cinder::Rectf(pos.x + kBackOfCardMargin, pos.y + kBackOfCardMargin, 
                             pos.x + kCardWidth - kBackOfCardMargin, pos.y + kCardHeight - kBackOfCardMargin));
     }
@@ -103,33 +102,32 @@ void BlackjackSimulation::DrawCards(const vector<Card> &cards, const vec2 &pos, 
 void BlackjackSimulation::DrawButton(const vec2 &pos, const string& label) {
     
     //Draw button background
-    ci::gl::color(ci::Color("yellow"));
+    ci::gl::color(kButtonColor);
     cinder::Rectf rectf(pos.x, pos.y, pos.x + kButtonWidth, pos.y + kButtonHeight);
     ci::gl::drawSolidRect(rectf);
-    ci::gl::color(ci::Color("black"));
     
     //Draw outline
+    ci::gl::color(kButtonOutlineColor);
     ci::gl::drawStrokedRect(rectf, 3);
     
     //Draw label
     ci::gl::drawStringCentered(label, vec2(pos.x + kButtonWidth/2, pos.y + kButtonHeight/3),
-                               ci::Color("black"), kButtonFont);
+                               kButtonLabelColor, kButtonFont);
 }
 
 void BlackjackSimulation::DrawValue(const vec2& pos, const vector<Card>& cards) {
     size_t value = gameEngine_.CalculateTotalValue(cards);
-    ci::gl::drawStringCentered(std::to_string(value), pos, ci::Color("black"), kValueFont);
+    ci::gl::drawStringCentered(std::to_string(value), pos, kValueColor, kValueFont);
 }
 
 void BlackjackSimulation::DrawRoundEndMessage() {
-    ci::gl::drawStringCentered(gameEngine_.GetMessage(), kEndRoundMessagePos, ci::Color("black"), kEndRoundMessageFont);
+    ci::gl::drawStringCentered(gameEngine_.GetMessage(), kEndRoundMessagePos, kMessageColor, kEndRoundMessageFont);
 }
 
 void BlackjackSimulation::DrawBalance() {
     string balance_string = kBalanceString + std::to_string(gameEngine_.GetBalance());
-    ci::gl::drawStringRight(balance_string, kBalancePos, ci::Color("black"), kBalanceFont);
+    ci::gl::drawStringRight(balance_string, kBalancePos, kBalanceColor, kBalanceFont);
 }
-
 
 }
 }
