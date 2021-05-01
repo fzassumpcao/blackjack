@@ -48,8 +48,9 @@ void BlackjackSimulation::mouseDown(ci::app::MouseEvent event) {
     vec2 pos = event.getPos();
     if (gameEngine_.IsGameFinished()) {
 
-        size_t large_bet_change = gameEngine_.GetBalance() * kLargeBetChangeFactor;
-        size_t small_bet_change = gameEngine_.GetBalance() * kSmallBetChangeFactor;
+        size_t balance = gameEngine_.GetBalance();
+        size_t large_bet_change = balance * kLargeBetChangeFactor;
+        size_t small_bet_change = balance * kSmallBetChangeFactor;
         
         //Checks if any of the bet UI buttons were pressed and updates the current bet accordingly
         if (glm::distance(pos, kDecreaseButtonPos) <= kLargeBetButtonRadius) {
@@ -64,12 +65,12 @@ void BlackjackSimulation::mouseDown(ci::app::MouseEvent event) {
             }
         }
         if (glm::distance(pos, kIncreaseButtonPos) <= kLargeBetButtonRadius) {
-            if (current_bet_ + large_bet_change <= kPlayerBalance) {
+            if (current_bet_ + large_bet_change <= balance) {
                 current_bet_ += large_bet_change;
             }
         }
         if (glm::distance(pos, kSmallIncreaseButtonPos) <= kSmallBetButtonRadius) {
-            if (current_bet_ + small_bet_change <= kPlayerBalance) {
+            if (current_bet_ + small_bet_change <= balance) {
                 current_bet_ += small_bet_change;
             }
         }
@@ -84,7 +85,7 @@ void BlackjackSimulation::mouseDown(ci::app::MouseEvent event) {
             in_starting_screen_ = false;
             
             //Sets default current bet for the next time the player chooses how much to bet
-            current_bet_ = gameEngine_.GetBalance() * kDefaultBetFactor;
+            current_bet_ = (gameEngine_.GetBalance() - current_bet_) * kDefaultBetFactor;
         }
         
     } else {
