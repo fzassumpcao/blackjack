@@ -3,14 +3,16 @@
 namespace blackjack {
 namespace visualizer {
 
-BlackjackSimulation::BlackjackSimulation() : gameEngine_(100), in_starting_screen_(true) {
+BlackjackSimulation::BlackjackSimulation() : gameEngine_(1000) {
+    in_starting_screen_ = true;
     ci::app::setWindowSize(kWindowWidth, kWindowHeight);
+    current_bet_ = kPlayerBalance * kDefaultBetFactor;
 }
 
 void BlackjackSimulation::draw() {
     
     if (gameEngine_.GetBalance() == 0) {
-        gameEngine_.Reset(1000);
+        gameEngine_.Reset(kPlayerBalance);
         in_starting_screen_ = true;
     }
     
@@ -24,7 +26,7 @@ void BlackjackSimulation::draw() {
     
     //Draw deal button, message, and dealer card count if game is finished, hit and stand buttons if not
     if (gameEngine_.IsGameFinished()) {
-        
+        DrawBetUI();
         DrawButton(kDealButtonPos, kDealString);
         if (in_starting_screen_) {
             ci::gl::drawStringCentered(kTitleString, kTitlePos, kTitleColor, kTitleFont);
@@ -45,15 +47,44 @@ void BlackjackSimulation::draw() {
 void BlackjackSimulation::mouseDown(ci::app::MouseEvent event) {
     vec2 pos = event.getPos();
     if (gameEngine_.IsGameFinished()) {
+
+        size_t large_bet_change = gameEngine_.GetBalance() * kLargeBetChangeFactor;
+        size_t small_bet_change = gameEngine_.GetBalance() * kSmallBetChangeFactor;
+        
+        //Checks if any of the bet UI buttons were pressed and updates the current bet accordingly
+        if (glm::distance(pos, kDecreaseButtonPos) <= kLargeBetButtonRadius) {
+            int new_bet = current_bet_ - large_bet_change;
+            if (new_bet > 0) {
+                current_bet_ -= large_bet_change;
+            }
+        }
+        if (glm::distance(pos, kSmallDecreaseButtonPos) <= kSmallBetButtonRadius) {
+            if (current_bet_ - small_bet_change > 0) {
+                current_bet_ -= small_bet_change;
+            }
+        }
+        if (glm::distance(pos, kIncreaseButtonPos) <= kLargeBetButtonRadius) {
+            if (current_bet_ + large_bet_change <= kPlayerBalance) {
+                current_bet_ += large_bet_change;
+            }
+        }
+        if (glm::distance(pos, kSmallIncreaseButtonPos) <= kSmallBetButtonRadius) {
+            if (current_bet_ + small_bet_change <= kPlayerBalance) {
+                current_bet_ += small_bet_change;
+            }
+        }
         
         //Check if mouse is inside deal button only when game is finished
         if (pos.x >= kDealButtonPos.x && pos.x <= (kDealButtonPos.x + kButtonWidth)
             && pos.y >= kDealButtonPos.y && pos.y <= (kDealButtonPos.y + kButtonHeight)) {
             std::random_device rd;
-            gameEngine_.StartDeal(std::default_random_engine(rd()), 100);
+            gameEngine_.StartDeal(std::default_random_engine(rd()), current_bet_);
             
             //Starting screen disappears first time deal button is pressed
             in_starting_screen_ = false;
+            
+            //Sets default current bet for the next time the player chooses how much to bet
+            current_bet_ = gameEngine_.GetBalance() * kDefaultBetFactor;
         }
         
     } else {
@@ -131,6 +162,37 @@ void BlackjackSimulation::DrawRoundEndMessage() {
 void BlackjackSimulation::DrawBalance() {
     string balance_string = kBalanceString + std::to_string(gameEngine_.GetBalance());
     ci::gl::drawStringRight(balance_string, kBalancePos, kBalanceColor, kBalanceFont);
+}
+
+void BlackjackSimulation::DrawBetUI() {
+    ci::gl::color(kDecreaseBetButtonColor);
+    ci::gl::drawSolidCircle(kDecreaseButtonPos, kLargeBetButtonRadius);
+    ci::gl::color(kButtonOutlineColor);
+    ci::gl::drawStrokedCircle(kDecreaseButtonPos, kLargeBetButtonRadius);
+    ci::gl::drawStringCentered(kDecreaseBetString, kDecreaseButtonLabelPos, kBetButtonLabelColor, kDecreaseBetFont);
+
+    ci::gl::color(kDecreaseBetButtonColor);
+    ci::gl::drawSolidCircle(kSmallDecreaseButtonPos, kSmallBetButtonRadius);
+    ci::gl::color(kButtonOutlineColor);
+    ci::gl::drawStrokedCircle(kSmallDecreaseButtonPos, kSmallBetButtonRadius);
+    ci::gl::drawStringCentered(kDecreaseBetString, kSmallDecreaseButtonLabelPos, kBetButtonLabelColor, kSmallDecreaseBetFont);
+    
+    ci::gl::drawStringCentered(std::to_string(current_bet_), kBetPos, kBetColor, kBetFont);
+    
+    ci::gl::color(kIncreaseBetButtonColor);
+    ci::gl::drawSolidCircle(kSmallIncreaseButtonPos, kSmallBetButtonRadius);
+    ci::gl::color(kButtonOutlineColor);
+    ci::gl::drawStrokedCircle(kSmallIncreaseButtonPos, kSmallBetButtonRadius);
+    ci::gl::drawStringCentered(kIncreaseBetString, kSmallIncreaseButtonLabelPos, kBetButtonLabelColor, kSmallIncreaseBetFont);
+
+    ci::gl::color(kIncreaseBetButtonColor);
+    ci::gl::drawSolidCircle(kIncreaseButtonPos, kLargeBetButtonRadius);
+    ci::gl::color(kButtonOutlineColor);
+    ci::gl::drawStrokedCircle(kIncreaseButtonPos, kLargeBetButtonRadius);
+    ci::gl::drawStringCentered(kIncreaseBetString, kIncreaseButtonLabelPos, kBetButtonLabelColor, kIncreaseBetFont);
+    
+    
+    ci::gl::drawStringCentered(kBetString, kBetStringPos, kBetStringColor, kBetStringFont);
 }
 
 }

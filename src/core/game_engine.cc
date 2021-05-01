@@ -67,6 +67,7 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed, size_t be
     Deal(true, true);
 
     if (CalculateTotalValue(player_cards_) == kBlackjackValue) {
+        dealer_cards_[0].TurnOver();
         is_game_finished_ = true;
         size_t win_amount = current_bet_ * kBlackjackPayMultiplier;
         message_ = kBlackjackString + std::to_string(win_amount);
