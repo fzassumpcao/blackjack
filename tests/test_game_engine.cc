@@ -94,7 +94,7 @@ TEST_CASE("Basic functionality") {
         REQUIRE(gameEngine.GetPlayerCards().size() == 0);
         REQUIRE(gameEngine.GetDealerCards().size() == 0);   
         REQUIRE(gameEngine.GetBalance() == 1);
-        REQUIRE_FALSE(gameEngine.IsGameFinished());
+        REQUIRE(gameEngine.IsGameFinished());
     }
 }
 

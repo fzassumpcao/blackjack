@@ -43,8 +43,6 @@ namespace blackjack{
         
         const vector<Card>& GetDealerCards();
         const vector<Card>& GetPlayerCards();
-        //TODO delete
-        std::deque<string> GetDeck();
         bool IsGameFinished();
         size_t GetBalance();
         const string& GetMessage();
