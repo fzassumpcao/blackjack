@@ -4,7 +4,8 @@
 
 namespace blackjack {
     
-GameEngine::GameEngine(bool deal_delay_on, size_t player_balance) {
+GameEngine::GameEngine(size_t player_balance) {
+    //TODO add double down?
     deck_cards_ = {"As", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "Ts", "Js", "Qs", "Ks",
                    "Ac", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "Tc", "Jc", "Qc", "Kc",
                    "Ah", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "Th", "Jh", "Qh", "Kh",
@@ -12,7 +13,6 @@ GameEngine::GameEngine(bool deal_delay_on, size_t player_balance) {
     player_cards_.clear();
     dealer_cards_.clear();
     is_game_finished_ = true;
-    deal_delay_on_ = deal_delay_on;
     player_balance_ = player_balance;
 }
 
@@ -67,6 +67,7 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed, size_t be
     Deal(true, true);
 
     if (CalculateTotalValue(player_cards_) == kBlackjackValue) {
+        dealer_cards_[0].TurnOver();
         is_game_finished_ = true;
         size_t win_amount = current_bet_ * kBlackjackPayMultiplier;
         message_ = kBlackjackString + std::to_string(win_amount);
@@ -75,6 +76,12 @@ void blackjack::GameEngine::StartDeal(std::default_random_engine seed, size_t be
 }
 
 void GameEngine::Hit() {
+    
+    //Player shouldn't be able to hit without first calling StartDeal()
+    if (player_cards_.empty()) {
+        throw std::logic_error("Can't hit before start deal");
+    }
+    
     if (!is_game_finished_) {
         Deal(false, true);
     }
@@ -93,6 +100,12 @@ void GameEngine::Hit() {
 }
 
 void GameEngine::Stand() {
+
+    //Player shouldn't be able to stand without first calling StartDeal()
+    if (player_cards_.empty()) {
+        throw std::logic_error("Can't stand before start deal");
+    }
+    
     dealer_cards_[0].TurnOver();
     
     while (CalculateTotalValue(dealer_cards_) < kDealerStandValue) {
@@ -159,10 +172,12 @@ void GameEngine::Deal(bool to_dealer, bool face_up) {
         player_cards_.push_back(Card(deck_.front(), face_up));
     }
     deck_.pop_front();
-    
-    if (deal_delay_on_) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(kDealDelay));
-    }
+}
+
+void GameEngine::Reset(size_t balance) {
+    player_cards_.clear();
+    dealer_cards_.clear();
+    player_balance_ = balance;
 }
 
 }
