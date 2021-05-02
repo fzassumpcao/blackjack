@@ -100,7 +100,7 @@ private:
     const ci::Color kBetButtonLabelColor = ci::Color("black");
     const float kLargeBetChangeFactor = 0.1;
     const float kSmallBetChangeFactor = 0.01;
-    const float kDefaultBetFactor = 0.1;
+    const size_t kDefaultBet = 10;
 
     /**
      * Draws a card outline and card info, with color corresponding to suit of card.
@@ -145,12 +145,6 @@ private:
      * Draws the 4 buttons to change bet amount, displays the current bet amount, and displays a default string
      */
     void DrawBetUI();
-    
-    /**
-     * Checks if any of the bet buttons were pressed and updates the current bet accordingly
-     * @param pos 
-     */
-    void CheckBetButtonPressed(const vec2& pos);
 };
 
 }
