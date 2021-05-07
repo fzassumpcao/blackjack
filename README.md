@@ -12,4 +12,5 @@ hit and stand buttons accordingly. The game uses normal
 blackjack rules. Choose another bet size and click deal
 at the end of every round.
 
+
 If the balance goes to 0 the game restarts with a balance of 1000.
